@@ -6,6 +6,10 @@ import (
 
 func Calculate(count int, packSizes []int) Packs {
 
+	if len(packSizes) == 0 || count == 0 {
+		return Packs{}
+	}
+
 	tmpPackSizes := append([]int{}, packSizes...)
 
 	node := internalCalculate(count, tmpPackSizes)

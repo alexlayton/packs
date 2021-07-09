@@ -1,0 +1,21 @@
+service: packs
+provider:
+  name: aws
+  runtime: go1.x
+  region: eu-west-1
+
+package:
+  individually: true
+  exclude:
+    - ./**
+
+functions:
+  calculate:
+    handler: bin/calculate
+    package:
+      include:
+        - ./bin/calculate
+    events:
+      - http:
+          path: calculate
+          method: post

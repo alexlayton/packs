@@ -41,3 +41,17 @@ func TestCalculator(t *testing.T) {
 		}
 	}
 }
+
+func TestCalculatorEmpty(t *testing.T) {
+	actual := Calculate(251, []int{})
+	if len(actual) != 0 {
+		t.Fail()
+	}
+}
+
+func TestCalculator0Count(t *testing.T) {
+	actual := Calculate(0, []int{250, 500, 1000, 2000, 5000})
+	if len(actual) != 0 {
+		t.Fail()
+	}
+}
