@@ -24,36 +24,55 @@ func Calculate(count int, packSizes []int) Packs {
 }
 
 func internalCalculate(count int, packSizes []int) node {
+
+	// Reverse sort all the pack sizes so we search with the biggest pack sizes first
 	sort.Sort(sort.Reverse(sort.IntSlice(packSizes)))
 
-	minNode := solvedNode(count, packSizes[len(packSizes)-1])
+	// Create a node which is enough of the smallest sized pack to fulfill the order
+	lastNode := solvedNode(count, packSizes[len(packSizes)-1])
 
 	// We got lucky and can just solve it with the smallest pack
-	if minNode.depth == 1 {
-		return minNode
+	if lastNode.depth == 1 {
+		return lastNode
 	}
 
-	minCost := minNode.cost(count)
+	// Calculate the cost - the amount that it goes past 0 by
+	minCost := lastNode.cost(count)
 
+	// Here we perform a bfs until we find a solution
 	queue := []node{newNode()}
 	for len(queue) > 0 {
 		node := queue[0]
 		queue = queue[1:]
 
+		// Pop the queue and check if the current node has fulfilled the order
 		if node.solved(count) {
+
+			// If we can beat the cost of fulfilling the order with the minimum
+			// pack size then I think we can assert the following;
+			// 1. We're sending out no more items than necessary
+			// 2. Doing reverse bfs means we find a solution with the least
+			// 	  possible packs
 			if node.cost(count) <= minCost {
 				return node
 			}
+
 		} else {
+
+			// If we cant fulfill the order add new nodes to the queue with
+			// each possible pack size to see if they can fulfill it
 			for _, packSize := range packSizes {
 				next := node.copy()
 				next.add(packSize)
 				queue = append(queue, next)
 			}
+
 		}
 	}
 
-	return minNode
+	// We return the worst case here, but this should never be reached as worst
+	// case the bfs will return the same result
+	return lastNode
 }
 
 type node struct {
