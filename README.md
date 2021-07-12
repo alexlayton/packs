@@ -16,6 +16,14 @@ Our customers can order any number of these items through our website, but they 
 2. Within the constraints of Rule 1 above, send out no more items than necessary to fulfil the order.
 3. Within the constraints of Rules 1 & 2 above, send out as few packs as possible to fulfil each order.
 
+For instance;
+
+1 item - 1 x 250
+250 items - 1 x 250
+251 items - 1 x 500
+501 items - 1 x 500, 2 x 250
+12001 items - 2 x 5000, 1 x 2000, 1 x 250
+
 ## API
 
 The service is deployed on AWS Lambda using Serverless. It can be deployed by running `./deploy.sh`. The function can be invoked using the following cURL;
