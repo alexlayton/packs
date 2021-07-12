@@ -4,11 +4,11 @@
 
 Imagine for a moment that one of our product lines ships in various pack sizes:
 
-• 250 Items
-• 500 Items
-• 1000 Items
-• 2000 Items
-• 5000 Items
+- 250 Items
+- 500 Items
+- 1000 Items
+- 2000 Items
+- 5000 Items
 
 Our customers can order any number of these items through our website, but they will always only be given complete packs.
 
@@ -18,10 +18,10 @@ Our customers can order any number of these items through our website, but they 
 
 For instance;
 
-1 item - 1 x 250
-250 items - 1 x 250
-251 items - 1 x 500
-501 items - 1 x 500, 2 x 250
+1 item - 1 x 250 \
+250 items - 1 x 250 \
+251 items - 1 x 500 \
+501 items - 1 x 500, 2 x 250 \
 12001 items - 2 x 5000, 1 x 2000, 1 x 250
 
 ## API
@@ -37,5 +37,5 @@ https://gi891qg1u8.execute-api.eu-west-1.amazonaws.com/dev/calculate
 Should receive the following JSON response;
 
 ```
-{"count": 666, "pack_sizes": [250,500, 1000, 2000, 5000]}
+{"packs":[{"size":250,"count":1},{"size":500,"count":1}]}
 ```
