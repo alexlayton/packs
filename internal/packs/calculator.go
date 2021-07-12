@@ -4,6 +4,7 @@ import (
 	"sort"
 )
 
+// Calculate the combination of packs needed to fulfill an order
 func Calculate(count int, packSizes []int) Packs {
 
 	if len(packSizes) == 0 || count == 0 {
@@ -18,6 +19,7 @@ func Calculate(count int, packSizes []int) Packs {
 	for k, v := range node.values {
 		packs = append(packs, Pack{Size: k, Count: v})
 	}
+
 	sort.Sort(packs)
 
 	return packs
@@ -28,16 +30,17 @@ func internalCalculate(count int, packSizes []int) node {
 	// Reverse sort all the pack sizes so we search with the biggest pack sizes first
 	sort.Sort(sort.Reverse(sort.IntSlice(packSizes)))
 
-	// Create a node which is enough of the smallest sized pack to fulfill the order
-	lastNode := solvedNode(count, packSizes[len(packSizes)-1])
+	// Create a naive solution which is just trying to use the largest packs which
+	// we'll try and beat
+	minNode := naiveNode(count, packSizes)
 
 	// We got lucky and can just solve it with the smallest pack
-	if lastNode.depth == 1 {
-		return lastNode
+	if minNode.depth == 1 {
+		return minNode
 	}
 
 	// Calculate the cost - the amount that it goes past 0 by
-	minCost := lastNode.cost(count)
+	minCost := minNode.cost(count)
 
 	// Here we perform a bfs until we find a solution
 	queue := []node{newNode()}
@@ -53,7 +56,8 @@ func internalCalculate(count int, packSizes []int) node {
 			// 1. We're sending out no more items than necessary
 			// 2. Doing reverse bfs means we find a solution with the least
 			// 	  possible packs
-			if node.cost(count) <= minCost {
+			nodeCost := node.cost(count)
+			if nodeCost == 0 || nodeCost <= minCost {
 				return node
 			}
 
@@ -72,7 +76,29 @@ func internalCalculate(count int, packSizes []int) node {
 
 	// We return the worst case here, but this should never be reached as worst
 	// case the bfs will return the same result
-	return lastNode
+	return minNode
+}
+
+func naiveNode(count int, packSizes []int) node {
+	i, n, curr := 0, newNode(), count
+
+	for i < len(packSizes) {
+		packSize := packSizes[i]
+		if curr >= packSize {
+			nPacks := curr / packSize
+			for j := 0; j < nPacks; j++ {
+				n.add(packSize)
+			}
+			curr = curr % packSize
+		}
+		i += 1
+	}
+
+	if curr != 0 {
+		n.add(packSizes[len(packSizes)-1])
+	}
+
+	return n
 }
 
 type node struct {
@@ -114,16 +140,4 @@ func (n node) copy() node {
 		new.values[k] = v
 	}
 	return new
-}
-
-func solvedNode(count, packSize int) node {
-	n := count / packSize
-	if count%packSize != 0 {
-		n += 1
-	}
-	node := newNode()
-	node.values[packSize] = n
-	node.total = n * packSize
-	node.depth = n
-	return node
 }
